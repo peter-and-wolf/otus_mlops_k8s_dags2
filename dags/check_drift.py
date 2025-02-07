@@ -14,8 +14,8 @@ aws_secret_access_key = Secret('env', 'AWS_SECRET_ACCESS_KEY', 'ya-s3-secret', '
 
 def hello_world(filekey: str):
   print(f'{datetime.now()}: {filekey} has uploaded to s3')
-  print(aws_access_key_id.to_env_secret())
-  print(aws_secret_access_key.to_env_secret())
+  print(aws_access_key_id.to_env_from_secret())
+  print(aws_secret_access_key.to_env_from_secret())
  
 
 with DAG(dag_id="hello_world_dag",
