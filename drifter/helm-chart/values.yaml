@@ -1,0 +1,14 @@
+apiPrefix: /api/v1
+
+deployment:
+  replicaCount: 1
+  evisionHistoryLimit: 5
+  maxSurge: 1
+  maxUnavailable: 33%
+  image: peterwolf/drifter:latest
+  port: 80
+  imagePullPolicy: Always
+  
+service:
+  port: 80
+  targetPort: 80

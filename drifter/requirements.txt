@@ -1,0 +1,10 @@
+starlette_exporter==0.23.0
+scikit-learn==1.5.1
+scipy==1.14.0
+pymorphy3==2.0.2
+pymorphy3-dicts-ru==2.4.417150.4580142
+stop-words==2018.7.23
+fastapi==0.111.1
+fastapi-cli==0.0.4
+pydantic-settings==2.3.4
+pandas==2.2.3
