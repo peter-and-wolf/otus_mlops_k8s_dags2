@@ -16,10 +16,7 @@ aws_secret_access_key = Secret('env', 'AWS_SECRET_ACCESS_KEY', 'ya-s3-secret', '
 
 def hello_world(filekey: str):
   print(f'{datetime.now()}: {filekey} has uploaded to s3')
-  config.load_kube_config()
-  v1 = client.CoreV1Api()
-  secret = v1.read_namespaced_secret("mysql-pass", "default")
-  print(secret)  
+  print(os.environ)
 
  
 
