@@ -22,7 +22,7 @@ with DAG(dag_id="hello_world_dag",
          start_date=days_ago(2),
          schedule="*/5 * * * *",
          catchup=False) as dag:
-  
+      
   filekey = str(uuid.uuid4())
 
   #joke_endpoint = os.environ.get('JOKE_API_ENDPOINT')
@@ -65,5 +65,4 @@ with DAG(dag_id="hello_world_dag",
       filekey=f'jokes/{filekey}'
     )
   )
-
-task
+  task
