@@ -1,7 +1,9 @@
 import os
 import uuid
 from datetime import datetime
+import base64
 
+from kubernetes import client, config #type: ignore
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.cncf.kubernetes.secret import Secret
@@ -14,8 +16,11 @@ aws_secret_access_key = Secret('env', 'AWS_SECRET_ACCESS_KEY', 'ya-s3-secret', '
 
 def hello_world(filekey: str):
   print(f'{datetime.now()}: {filekey} has uploaded to s3')
-  print(aws_access_key_id.to_env_from_secret())
-  print(aws_secret_access_key.to_env_from_secret())
+  config.load_kube_config()
+  v1 = client.CoreV1Api()
+  secret = v1.read_namespaced_secret("mysql-pass", "default")
+  print(secret)  
+
  
 
 with DAG(dag_id="hello_world_dag",
