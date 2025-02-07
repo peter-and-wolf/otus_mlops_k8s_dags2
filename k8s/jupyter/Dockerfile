@@ -3,7 +3,7 @@ FROM python:3.12.3-slim
 WORKDIR /app
 
 RUN pip install --upgrade pip
-RUN pip install notebook evidently mlflow
+RUN pip install notebook evidently mlflow s3fs
 
 COPY test-evidently.ipynb .
 

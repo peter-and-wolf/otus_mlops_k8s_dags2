@@ -1,0 +1,18 @@
+git:
+  dags:
+    enabled: true
+    repositories:
+    - repository: "https://github.com/peter-and-wolf/otus_mlops_k8s_dags2.git"
+      branch: "main"
+      name: ""
+      path: "dags"
+
+extraEnvVars:
+  - name: JOKE_API_ENDPOINT
+    value: "http://51.250.33.39:8000/api/v1/jokes"
+  - name: S3_ENDPOINT
+    value: "https://storage.yandexcloud.net"
+  - name: S3_BUCKET
+    value: "k8s-outliers"
+  - name: JOKE_TO_S3_IMAGE
+    value: "peterwolf/joke-to-s3:v1"
