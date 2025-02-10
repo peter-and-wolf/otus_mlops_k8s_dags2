@@ -24,7 +24,7 @@ def hello_world(filekey: str):
   aws_access_secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
   print(aws_access_key_id, aws_access_secret_key)
 
-  current_ds = pd.read_csv('http://localhost:9999/api/v1/data')
+  current_ds = pd.read_csv('http://drifter-svc/api/v1/data')
   print(current_ds.head())
 
 
