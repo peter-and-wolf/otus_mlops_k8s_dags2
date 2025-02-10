@@ -23,8 +23,14 @@ def hello_world(filekey: str):
   aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
   aws_access_secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
   s3_endpoint_url = os.environ['MLFLOW_S3_ENDPOINT_URL']
+  drifter_url = os.environ['DRIFTER_URL'] 
+  reference_df_path = os.environ['REFERENCE_DF_PATH']
 
-  print(aws_access_key_id, aws_access_secret_key, s3_endpoint_url)
+  print(aws_access_key_id) 
+  print(aws_access_secret_key) 
+  print(s3_endpoint_url)
+  print(drifter_url)
+  print(reference_df_path)
 
   s3 = s3fs.S3FileSystem(
     key=aws_access_key_id,
@@ -33,24 +39,24 @@ def hello_world(filekey: str):
   )
 
   reference_df = pd.read_csv(
-    s3.open('datasets/reference.csv')
+    s3.open(reference_df_path)
   )
   print('REFERENCE')
   print(reference_df.head())
 
-  current_df = pd.read_csv('http://drifter-svc.default.svc/api/v1/data')
+  current_df = pd.read_csv(drifter_url)
   print('CURRENT')
   print(current_df.head())
 
-  column_mapping = ColumnMapping()
-  column_mapping.numerical_features = list(reference_df.columns)
+  #column_mapping = ColumnMapping()
+  #column_mapping.numerical_features = list(reference_df.columns)
 
-  data_drift = Report(metrics = [DataDriftPreset()])
-  data_drift.run(
-    current_data = current_df,
-    reference_data = reference_df,
-    column_mapping=column_mapping
-  )
+  #data_drift = Report(metrics = [DataDriftPreset()])
+  #data_drift.run(
+  #  current_data = current_df,
+  #  reference_data = reference_df,
+  #  column_mapping=column_mapping
+  #)
 
 
 with DAG(dag_id="hello_world_dag",
