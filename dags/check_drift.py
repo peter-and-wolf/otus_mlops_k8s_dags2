@@ -24,7 +24,7 @@ def hello_world(filekey: str):
   aws_access_secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
   s3_endpoint_url = os.environ['MLFLOW_S3_ENDPOINT_URL']
 
-  print(aws_access_key_id, aws_access_secret_key)
+  print(aws_access_key_id, aws_access_secret_key, s3_endpoint_url)
 
   s3 = s3fs.S3FileSystem(
     key=aws_access_key_id,
@@ -38,9 +38,19 @@ def hello_world(filekey: str):
   print('REFERENCE')
   print(reference_df.head())
 
-  current_ds = pd.read_csv('http://drifter-svc.default.svc/api/v1/data')
+  current_df = pd.read_csv('http://drifter-svc.default.svc/api/v1/data')
   print('CURRENT')
-  print(current_ds.head())
+  print(current_df.head())
+
+  column_mapping = ColumnMapping()
+  column_mapping.numerical_features = list(reference_df.columns)
+
+  data_drift = Report(metrics = [DataDriftPreset()])
+  data_drift.run(
+    current_data = current_df,
+    reference_data = reference_df,
+    column_mapping=column_mapping
+  )
 
 
 with DAG(dag_id="hello_world_dag",
