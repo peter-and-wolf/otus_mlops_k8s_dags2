@@ -78,7 +78,11 @@ stringData:
   AWS_SECRET_ACCESS_KEY: '<ваш секретный ключ>'
 ```
 
-Активируйте этот манифест в кластере в пространстве имен `airflow`.
+Активируйте этот манифест в кластере в пространстве имен `airflow`:
+
+```bash
+kubectl apply -n airflow -f drifter-secret.yaml
+```
 
 Создайте манифес [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) такого содержания:
 
@@ -93,11 +97,17 @@ data:
   MLFLOW_S3_ENDPOINT_URL: http://mlflow-tracking.mlflow.svc
 ```
 
+Активируйте этот манифест в кластере в пространстве имен `airflow`:
+
+```bash
+kubectl apply -n airflow -f drifter-cm.yaml
+```
+
 Теперь нужно установить на worker-ноду airflow дополнительные python-пакеты. Сперва создаем [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/), 
 который будет содержать [k8s/airflow/requirements.txt](k8s/airflow/requirements.txt). Выполните команду:   
 
 ```bash
-kubectl create -n airflow configmap requirements --from-file=requirements.txt
+kubectl create -n airflow configmap drfter-requirements --from-file=requirements.txt
 ```
 
 Реконфигурируем кластер:

@@ -7,7 +7,48 @@ git:
       name: ""
       path: "dags"
 
-worker:
+web: 
+  podSecurityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+  
+  # Указываем, куда будет монтироваться volume
+  extraVolumeMounts:
+    - name: requirements
+      mountPath: /bitnami/python/
+  
+  # Указываем, где взять volume, чтобы примонтировать 
+  # его по координатам из предыдущей секции 
+  extraVolumes:
+    - name: requirements
+      configMap:
+        name: drfter-requirements
+
+scheduler: 
+  podSecurityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+    
+  # Указываем, куда будет монтироваться volume
+  extraVolumeMounts:
+    - name: requirements
+      mountPath: /bitnami/python/
+  
+  # Указываем, где взять volume, чтобы примонтировать 
+  # его по координатам из предыдущей секции 
+  extraVolumes:
+    - name: requirements
+      configMap:
+        name: drfter-requirements
+
+worker: 
+  podSecurityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+    
   extraEnvVarsSecret: "drifter-secret"
   extraEnvVarsCM: "drifter-envs"
   
@@ -21,4 +62,4 @@ worker:
   extraVolumes:
     - name: requirements
       configMap:
-        name: requirements
+        name: drfter-requirements
