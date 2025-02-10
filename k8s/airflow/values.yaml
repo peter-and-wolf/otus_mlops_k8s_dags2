@@ -8,14 +8,17 @@ git:
       path: "dags"
 
 worker:
-  extraEnvVarsSecret: "ya-s3-secret"
-
-extraEnvVars:
-  - name: JOKE_API_ENDPOINT
-    value: "http://51.250.33.39:8000/api/v1/jokes"
-  - name: S3_ENDPOINT
-    value: "https://storage.yandexcloud.net"
-  - name: S3_BUCKET
-    value: "k8s-outliers"
-  - name: JOKE_TO_S3_IMAGE
-    value: "peterwolf/joke-to-s3:v1"
+  extraEnvVarsSecret: "drifter-secret"
+  extraEnvVarsCM: "drifter-envs"
+  
+  # Указываем, куда будет монтироваться volume
+  extraVolumeMounts:
+    - name: requirements
+      mountPath: /bitnami/python/
+  
+  # Указываем, где взять volume, чтобы примонтировать 
+  # его по координатам из предыдущей секции 
+  extraVolumes:
+    - name: requirements
+      configMap:
+        name: requirements

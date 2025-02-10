@@ -3,6 +3,9 @@ import uuid
 from datetime import datetime
 import base64
 
+import mlflow
+import evidently
+
 from kubernetes import client, config #type: ignore
 from airflow import DAG
 from airflow.operators.python import PythonOperator

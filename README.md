@@ -46,23 +46,6 @@ kubectl get secrets mlflow-minio --namespace mlflow --template '{{index .data "r
 
 Создайте новый бакет с именем `datasets` и загрузите внутрь файл [drifter/data/reference.csv](drifter/data/reference.csv) – это будет референсный датасет, с которым нужно сравнивать вновь прибывшие данные.
 
-Кроме того, создайте идентификатор секретного ключа и сам секретный ключ для доступа в хранилище. Графический интерфейс интуитивно понятен, поэтому сложностей быть не должно. 
-
-Скопируйте созданные секреты и скопируйте их в манифест:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ya-s3-secret
-type: Opaque
-stringData:
-  AWS_ACCESS_KEY_ID: '<идентификатор вашего секретного ключа>'
-  AWS_SECRET_ACCESS_KEY: '<ваш секретный ключ>'
-```
-
-Активируйте этот манифест в кластере. 
-
 ## Использование MLFlow
 
 Использовать MLFlow, который запущен в кластере, будет приложение, которое исполняется в том же кластере. Чтобы достучаться до MLFlow и его [Artifact Storage](https://mlflow.org/docs/latest/tracking/artifacts-stores.html), в качестве которого выступает (minio)[https://min.io/], нужно:
@@ -78,6 +61,43 @@ stringData:
 
 ```bash
 helm install airflow bitnami/airflow --create-namespace --namespace=airflow
+```
+
+Зайдите в интерфейс [minio](http://minio.local) и создайте идентификатор секретного ключа и сам секретный ключ для доступа в хранилище. Графический интерфейс minio интуитивно понятен, поэтому сложностей быть не должно. 
+
+Скопируйте созданные секреты и скопируйте их в манифест:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ya-s3-secret
+type: Opaque
+stringData:
+  AWS_ACCESS_KEY_ID: '<идентификатор вашего секретного ключа>'
+  AWS_SECRET_ACCESS_KEY: '<ваш секретный ключ>'
+```
+
+Активируйте этот манифест в кластере в пространстве имен `airflow`.
+
+Создайте манифес [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) такого содержания:
+
+```bash
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drifter-envs
+  namespace: airflow
+data:
+  MLFLOW_TRACKING_URI: http://mlflow-minio.mlflow.svc
+  MLFLOW_S3_ENDPOINT_URL: http://mlflow-tracking.mlflow.svc
+```
+
+Теперь нужно установить на worker-ноду airflow дополнительные python-пакеты. Сперва создаем [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/), 
+который будет содержать [k8s/airflow/requirements.txt](k8s/airflow/requirements.txt). Выполните команду:   
+
+```bash
+kubectl create -n airflow configmap requirements --from-file=requirements.txt
 ```
 
 Реконфигурируем кластер:
