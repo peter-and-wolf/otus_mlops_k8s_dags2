@@ -86,7 +86,7 @@ kubectl apply -n airflow -f drifter-secret.yaml
 
 Создайте манифес [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) такого содержания:
 
-```bash
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:

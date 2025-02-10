@@ -1,25 +1,31 @@
 import os
 import uuid
-from datetime import datetime
-import base64
+from pathlib import Path
 
+import numpy as np
+import pandas as pd
+
+import s3fs
 import mlflow
-import evidently
+import requests
 
-from kubernetes import client, config #type: ignore
+from evidently import ColumnMapping
+from evidently.report import Report
+from evidently.metric_preset import DataDriftPreset
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.providers.cncf.kubernetes.secret import Secret
-# from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator # type: ignore
 from airflow.utils.dates import days_ago
 
-aws_access_key_id = Secret('env', 'AWS_ACCESS_KEY_ID', 'ya-s3-secret', 'AWS_ACCESS_KEY_ID')
-aws_secret_access_key = Secret('env', 'AWS_SECRET_ACCESS_KEY', 'ya-s3-secret', 'AWS_SECRET_ACCESS_KEY')
 
 
 def hello_world(filekey: str):
-  print(f'{datetime.now()}: {filekey} has uploaded to s3')
-  print(os.environ)
+  
+  aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
+  aws_access_secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
+
+
+  print(aws_access_key_id, aws_access_secret_key)
 
  
 

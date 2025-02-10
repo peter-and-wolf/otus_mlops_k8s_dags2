@@ -4,5 +4,6 @@ metadata:
   name: drifter-envs
   namespace: airflow
 data:
+  DRIFTER_URL: http://drifter-svc/api/v1/data
   MLFLOW_TRACKING_URI: http://mlflow-minio.mlflow.svc
   MLFLOW_S3_ENDPOINT_URL: http://mlflow-tracking.mlflow.svc
