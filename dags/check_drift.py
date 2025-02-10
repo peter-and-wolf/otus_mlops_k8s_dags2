@@ -22,13 +22,26 @@ def hello_world(filekey: str):
   
   aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
   aws_access_secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
+  s3_endpoint_url = os.environ['MLFLOW_S3_ENDPOINT_URL']
+
   print(aws_access_key_id, aws_access_secret_key)
 
-  current_ds = pd.read_csv('http://10.96.28.252/api/v1/data')
+  s3 = s3fs.S3FileSystem(
+    key=aws_access_key_id,
+    secret=aws_access_secret_key,
+    endpoint_url=s3_endpoint_url
+  )
+
+  reference_df = pd.read_csv(
+    s3.open('datasets/reference.csv')
+  )
+  print('REFERENCE')
+  print(reference_df.head())
+
+  current_ds = pd.read_csv('http://drifter-svc.default.svc/api/v1/data')
+  print('CURRENT')
   print(current_ds.head())
 
-
- 
 
 with DAG(dag_id="hello_world_dag",
          start_date=days_ago(2),
