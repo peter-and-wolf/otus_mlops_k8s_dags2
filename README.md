@@ -57,7 +57,17 @@ kubectl get secrets mlflow-minio --namespace mlflow --template '{{index .data "r
 
 ## Установка приложения, которое отдает данные
 
-В директории [k8s/drifter](k8s/drifter) выполните:
+В директории [drifter](drifter) живет код FastAPI-приложения, которое возвращает датасет со случайными искажениями, которые могут спровоцировать дрифт. Выполните:
+
+```bash
+# Собираем образ с приложением
+docker build  -t peterwolf/drifter:latest .
+
+# Отправляем образ в докер хаб
+docker push peterwolf/drifter:lates
+```
+
+В директории [k8s/drifter](k8s/drifter) живет хелм-чарт для этого приложения. Выполните:
 
 ```bash
 helm install drifter .
@@ -124,13 +134,13 @@ kubectl create -n airflow configmap drfter-requirements --from-file=requirements
 helm upgrade --install airflow bitnami/airflow --create-namespace --namespace=airflow -f values.yaml
 ```
 
-Проброс портов:
+Теперь идем в GUI airflow. Делаем по-простому и вытаскиваем наружу порт (как сконфигурровать ingress разберитесь сами):
 
 ```bash
 kubectl port-forward -n airflow svc/airflow 8080:8080
 ```
 
-Логин: `user`. Узнать пароль:
+Логин: `user`. Пароль можно узнать так:
 
 ```bash
 kubectl get secret airflow --namespace airflow  --template='{{index .data "airflow-password"}}' | base64 -d

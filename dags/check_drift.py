@@ -5,12 +5,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-import s3fs
-import mlflow
+import s3fs # type: ignore
+import mlflow # type: ignore
 
-from evidently import ColumnMapping
-from evidently.report import Report
-from evidently.metric_preset import DataDriftPreset
+from evidently import ColumnMapping # type: ignore
+from evidently.report import Report # type: ignore
+from evidently.metric_preset import DataDriftPreset # type: ignore
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -59,7 +59,7 @@ def hello_world():
   report = data_drift.as_dict()
 
   with tempfile.TemporaryDirectory() as tmp_dir:
-    path = Path(tmp_dir, 'test-evidently.csv')
+    path = Path(tmp_dir, 'current-dataset.csv')
     reference_df.to_csv(path, index=False)
     
     with mlflow.start_run() as run:
