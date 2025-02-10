@@ -1,5 +1,5 @@
 import os
-import uuid
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -17,9 +17,7 @@ from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 
 
-
-def hello_world(filekey: str):
-  
+def hello_world():  
   aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
   aws_access_secret_key = os.environ['AWS_SECRET_ACCESS_KEY']
   s3_endpoint_url = os.environ['MLFLOW_S3_ENDPOINT_URL']
@@ -48,15 +46,31 @@ def hello_world(filekey: str):
   print('CURRENT')
   print(current_df.head())
 
-  #column_mapping = ColumnMapping()
-  #column_mapping.numerical_features = list(reference_df.columns)
+  column_mapping = ColumnMapping()
+  column_mapping.numerical_features = list(reference_df.columns)
 
-  #data_drift = Report(metrics = [DataDriftPreset()])
-  #data_drift.run(
-  #  current_data = current_df,
-  #  reference_data = reference_df,
-  #  column_mapping=column_mapping
-  #)
+  data_drift = Report(metrics = [DataDriftPreset()])
+  data_drift.run(
+    current_data = current_df,
+    reference_data = reference_df,
+    column_mapping=column_mapping
+  )
+
+  report = data_drift.as_dict()
+
+  with tempfile.TemporaryDirectory() as tmp_dir:
+    path = Path(tmp_dir, 'test-evidently.csv')
+    reference_df.to_csv(path, index=False)
+    
+    with mlflow.start_run() as run:
+      mlflow.log_artifact(path)
+      mlflow.log_param('dataset_drift', report['metrics'][1]['result']['dataset_drift'])
+      mlflow.log_metrics({
+        'number_of_drifted_columns': report['metrics'][1]['result']['number_of_drifted_columns'],
+        'share_of_drifted_columns': report['metrics'][1]['result']['share_of_drifted_columns'],
+      })
+      for feature in column_mapping.numerical_features:
+        mlflow.log_metric(feature, report["metrics"][1]["result"]["drift_by_columns"][feature]["drift_score"])
 
 
 with DAG(dag_id="hello_world_dag",
@@ -64,46 +78,8 @@ with DAG(dag_id="hello_world_dag",
          schedule="*/5 * * * *",
          catchup=False) as dag:
       
-  filekey = str(uuid.uuid4())
-
-  #joke_endpoint = os.environ.get('JOKE_API_ENDPOINT')
-  #if joke_endpoint is None:
-  #  raise ValueError('env JOKE_API_ENDPOINT must be set!')
-  
-  #s3_endpoint = os.environ.get('S3_ENDPOINT')
-  #if s3_endpoint is None:
-  #  raise ValueError('env S3_ENDPOINT must be set!')
-  
-  #s3_bucket = os.environ.get('S3_BUCKET')
-  #if s3_bucket is None:
-  #  raise ValueError('env S3_BUCKET must be set!')
-  
-  #joke_to_s3_image = os.environ.get('JOKE_TO_S3_IMAGE')
-  #if joke_to_s3_image is None:
-  #  raise ValueError('env JOKE_TO_S3_IMAGE must be set!')
-  
-
-  #task1 = KubernetesPodOperator (
-  #  task_id='joke-to-s3',
-  #  name='joke-to-s3',
-  #  namespace='default',
-  #  image=joke_to_s3_image,
-  #  cmds = [
-  #    'python', 'main.py', 
-  #    '--joke-endpoint', joke_endpoint,
-  #    '--s3-endpoint', s3_endpoint,
-  #    '--bucket', s3_bucket,
-  #    '--filekey', f'jokes/{filekey}'
-  #  ],
-  #  secrets=[aws_access_key_id, aws_secret_access_key],
-  #  in_cluster=True
-  #)
-
   task = PythonOperator(
     task_id="hello_world",
     python_callable=hello_world,
-    op_kwargs=dict(
-      filekey=f'jokes/{filekey}'
-    )
   )
   task

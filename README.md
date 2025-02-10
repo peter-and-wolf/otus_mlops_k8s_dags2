@@ -55,6 +55,14 @@ kubectl get secrets mlflow-minio --namespace mlflow --template '{{index .data "r
 
 > Доменные имена `mlflow-minio.mlflow.svc` и `mlflow-tracking.mlflow.svc` – это имена служб k8s типа [ClusterIP](https://kubernetes.io/docs/concepts/services-networking/service/#type-clusterip), которые создает Helm при установке чарта с mlflow. Эти службы "тащат" трафик в соответствующие поды. 
 
+## Установка приложения, которое отдает данные
+
+В директории [k8s/drifter](k8s/drifter) выполните:
+
+```bash
+helm install drifter .
+```
+
 ## Установка Airflow
 
 Ставим кластер:
