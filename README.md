@@ -48,7 +48,7 @@ kubectl get secrets mlflow-minio --namespace mlflow --template '{{index .data "r
 
 ## Использование MLFlow
 
-Использовать MLFlow, который запущен в кластере, будет приложение, которое исполняется в том же кластере. Чтобы достучаться до MLFlow и его [Artifact Storage](https://mlflow.org/docs/latest/tracking/artifacts-stores.html), в качестве которого выступает (minio)[https://min.io/], нужно:
+Использовать MLFlow, который запущен в кластере, будет приложение, которое исполняется в том же кластере. Чтобы достучаться до MLFlow и его [Artifact Storage](https://mlflow.org/docs/latest/tracking/artifacts-stores.html), в качестве которого выступает [minio](https://min.io/), нужно:
 
 * Установить переменную окружения `MLFLOW_S3_ENDPOINT_URL=mlflow-minio.mlflow.svc`
 * Установить переменную окружения `MLFLOW_TRACKING_URI=http://mlflow-tracking.mlflow.svc` или вызвать в коде метод `mlflow.set_tracking_uri('http://mlflow-tracking.mlflow.svc')`.
