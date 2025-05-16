@@ -23,7 +23,7 @@ web:
   extraVolumes:
     - name: requirements
       configMap:
-        name: drfter-requirements
+        name: drifter-requirements
 
 scheduler: 
   podSecurityContext:
@@ -41,7 +41,7 @@ scheduler:
   extraVolumes:
     - name: requirements
       configMap:
-        name: drfter-requirements
+        name: drifter-requirements
 
 worker: 
   podSecurityContext:
@@ -62,4 +62,4 @@ worker:
   extraVolumes:
     - name: requirements
       configMap:
-        name: drfter-requirements
+        name: drifter-requirements

@@ -64,7 +64,7 @@ kubectl get secrets mlflow-minio --namespace mlflow --template '{{index .data "r
 docker build  -t peterwolf/drifter:latest .
 
 # Отправляем образ в докер хаб
-docker push peterwolf/drifter:lates
+docker push peterwolf/drifter:latest
 ```
 
 В директории [k8s/drifter](k8s/drifter) живет хелм-чарт для этого приложения. Выполните:
@@ -78,7 +78,7 @@ helm install drifter .
 Ставим кластер:
 
 ```bash
-helm install airflow bitnami/airflow --create-namespace --namespace=airflow
+helm install airflow bitnami/airflow --create-namespace --namespace=airflow --version=19.0.0
 ```
 
 Зайдите в интерфейс [minio](http://minio.local) и создайте идентификатор секретного ключа и сам секретный ключ для доступа в хранилище. Графический интерфейс minio интуитивно понятен, поэтому сложностей быть не должно. 
@@ -125,7 +125,7 @@ kubectl apply -n airflow -f drifter-cm.yaml
 который будет содержать [k8s/airflow/requirements.txt](k8s/airflow/requirements.txt). Выполните команду:   
 
 ```bash
-kubectl create -n airflow configmap drfter-requirements --from-file=requirements.txt
+kubectl create -n airflow configmap drifter-requirements --from-file=requirements.txt
 ```
 
 Реконфигурируем кластер:
@@ -137,7 +137,7 @@ helm upgrade --install airflow bitnami/airflow --create-namespace --namespace=ai
 Теперь идем в GUI airflow. Делаем по-простому и вытаскиваем наружу порт (как сконфигурровать ingress разберитесь сами):
 
 ```bash
-kubectl port-forward -n airflow svc/airflow 8080:8080
+kubectl port-forward -n airflow svc/airflow-web 8080:8080
 ```
 
 Логин: `user`. Пароль можно узнать так:
